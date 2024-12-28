@@ -16,5 +16,5 @@ jobs:
   docs-lint:
     uses: anycable/github-actions/.github/workflows/docs-lint.yml@master
     with:
-      forspell-args: "**/*.md *.md -e BACKERS.md"
+      forspell-args: "**/*.md *.md"
       lychee-args: docs/* --exclude "(rails/|anycable-go/|deployment/|architecture.md)" -v README.md CHANGELOG.md

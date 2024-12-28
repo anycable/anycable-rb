@@ -9,7 +9,7 @@
 
 [AnyCable](https://anycable.io) is an open-source language-agnostic realtime server for reliable two-way communication. This repository contains the Ruby SDK for AnyCable including RPC server implementaions, broadcasting adapters and other utilities that could help you to integrate AnyCable into any Ruby application. For Rails integration, check out a dedicated gem: [anycable-rails](https://github.com/anycable/anycable-rails).
 
-🌐 [Website](https://anycable.io) | 📚 [Documentation](https://docs.anycable.io/ruby/non_rails)
+🌐 [Website](https://anycable.io) · 📚 [Documentation](https://docs.anycable.io/ruby/non_rails)
 
 ## Requirements
 
