@@ -3,14 +3,14 @@ name: Lint Docs
 on:
   push:
     branches:
-    - master
+      - main
     paths:
-    - "**/*.md"
-    - ".github/workflows/docs-lint.yml"
+      - "**/*.md"
+      - ".github/workflows/docs-lint.yml"
   pull_request:
     paths:
-    - "**/*.md"
-    - ".github/workflows/docs-lint.yml"
+      - "**/*.md"
+      - ".github/workflows/docs-lint.yml"
 
 jobs:
   docs-lint:

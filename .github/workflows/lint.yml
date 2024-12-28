@@ -3,20 +3,20 @@ name: Lint Ruby
 on:
   push:
     branches:
-    - master
+      - main
     paths:
-    - "gemfiles/*"
-    - "Gemfile"
-    - "**/*.rb"
-    - "**/*.gemspec"
-    - ".github/workflows/lint.yml"
+      - "gemfiles/*"
+      - "Gemfile"
+      - "**/*.rb"
+      - "**/*.gemspec"
+      - ".github/workflows/lint.yml"
   pull_request:
     paths:
-    - "gemfiles/*"
-    - "Gemfile"
-    - "**/*.rb"
-    - "**/*.gemspec"
-    - ".github/workflows/lint.yml"
+      - "gemfiles/*"
+      - "Gemfile"
+      - "**/*.rb"
+      - "**/*.gemspec"
+      - ".github/workflows/lint.yml"
 
 jobs:
   rubocop:
@@ -24,14 +24,14 @@ jobs:
     env:
       BUNDLE_GEMFILE: "gemfiles/rubocop.gemfile"
     steps:
-    - uses: actions/checkout@v4
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.1
-        bundler-cache: true
-    - name: Lint Ruby code with RuboCop
-      run: |
-        bundle exec rubocop
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+          bundler-cache: true
+      - name: Lint Ruby code with RuboCop
+        run: |
+          bundle exec rubocop
   steep:
     runs-on: ubuntu-latest
     env:
@@ -43,12 +43,12 @@ jobs:
       matrix:
         ruby: ["3.2"]
     steps:
-    - uses: actions/checkout@v4
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
-    - name: Run Steep
-      run: |
-        bundle exec rbs collection install
-        bundle exec rake steep
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run Steep
+        run: |
+          bundle exec rbs collection install
+          bundle exec rake steep
