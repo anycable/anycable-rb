@@ -5,19 +5,19 @@ require_relative "lib/anycable/version"
 Gem::Specification.new do |spec|
   spec.name = "anycable-core"
   spec.version = AnyCable::VERSION
-  spec.authors = ["palkan"]
+  spec.authors = ["Vladimir Dementyev"]
   spec.email = ["dementiev.vm@gmail.com"]
 
-  spec.summary = "AnyCable core RPC implementation"
-  spec.description = "AnyCable core RPC implementation not depenending on a particular server type (e.g., gRPC or whatever)"
-  spec.homepage = "http://github.com/anycable/anycable"
+  spec.summary = "Ruby SDK for AnyCable, an open-source realtime server for reliable two-way communication"
+  spec.description = "Ruby SDK for AnyCable, an open-source realtime server for reliable two-way communication"
+  spec.homepage = "http://github.com/anycable/anycable-rb"
   spec.license = "MIT"
   spec.metadata = {
-    "bug_tracker_uri" => "http://github.com/anycable/anycable/issues",
-    "changelog_uri" => "https://github.com/anycable/anycable/blob/master/CHANGELOG.md",
+    "bug_tracker_uri" => "http://github.com/anycable/anycable-rb/issues",
+    "changelog_uri" => "https://github.com/anycable/anycable-rb/blob/master/CHANGELOG.md",
     "documentation_uri" => "https://docs.anycable.io/",
     "homepage_uri" => "https://anycable.io/",
-    "source_code_uri" => "http://github.com/anycable/anycable",
+    "source_code_uri" => "http://github.com/anycable/anycable-rb",
     "funding_uri" => "https://github.com/sponsors/anycable"
   }
 
@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
     Dir.glob("sig/anycable/**/*.rbs") + %w[sig/anycable.rbs] + %w[sig/manifest.yml]
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.7"
+  spec.required_ruby_version = ">= 3.0"
 
   spec.add_dependency "anyway_config", "~> 2.2"
   spec.add_dependency "base64", ">= 0.2"

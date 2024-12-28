@@ -213,7 +213,7 @@ See [#71](https://github.com/anycable/anycable/pull/71).
 
 ---
 
-See [Changelog](https://github.com/anycable/anycable/blob/0-6-stable/CHANGELOG.md) for versions <1.0.0.
+See [Changelog](https://github.com/anycable/anycable-rb/blob/0-6-stable/CHANGELOG.md) for versions <1.0.0.
 
 [@palkan]: https://github.com/palkan
 [@smasry]: https://github.com/smasry
