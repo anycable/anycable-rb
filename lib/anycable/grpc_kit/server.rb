@@ -46,6 +46,7 @@ module AnyCable
 
         @tls_credentials = options.delete(:tls_credentials)
         @grpc_server = build_server(**options)
+        @sock = nil
       end
 
       # Start gRPC server in background and
@@ -63,6 +64,8 @@ module AnyCable
 
         @start_thread = Thread.new do
           loop do
+            break unless @sock
+
             conn = @sock.accept
             server.run(conn)
           rescue IOError
@@ -117,6 +120,8 @@ module AnyCable
 
         grpc_server.graceful_shutdown
         sock.close
+
+        @sock = nil
 
         logger.info "RPC server stopped"
       end

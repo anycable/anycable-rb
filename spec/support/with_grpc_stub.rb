@@ -6,8 +6,8 @@ RSpec.shared_context "anycable:grpc:stub" do
   before(:all) do
     @service =
       if GRPC_KIT
-        sock = TCPSocket.new(*AnyCable.config.rpc_host.split(":"))
-        AnyCable::GRPC::Stub.new(sock)
+        @sock = TCPSocket.new("127.0.0.1", AnyCable.config.rpc_host.split(":").last, connect_timeout: 0.1)
+        AnyCable::GRPC::Stub.new(@sock, timeout: 1)
       else
         AnyCable::GRPC::Stub.new(AnyCable.config.rpc_host, :this_channel_is_insecure)
       end
@@ -19,8 +19,8 @@ RSpec.shared_context "anycable:grpc:stub" do
   let(:service) do
     @service || begin
       if GRPC_KIT
-        sock = TCPSocket.new(*AnyCable.config.rpc_host.split(":"))
-        AnyCable::GRPC::Stub.new(sock)
+        sock = TCPSocket.new("0.0.0.0", AnyCable.config.rpc_host.split(":").last, connect_timeout: 0.1)
+        AnyCable::GRPC::Stub.new(sock, timeout: 1)
       else
         AnyCable::GRPC::Stub.new(AnyCable.config.rpc_host, :this_channel_is_insecure)
       end

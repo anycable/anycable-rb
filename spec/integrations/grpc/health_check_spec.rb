@@ -7,8 +7,8 @@ describe "health checker" do
 
   before(:all) do
     @service = if GRPC_KIT
-      sock = TCPSocket.new(*AnyCable.config.rpc_host.split(":"))
-      ::Grpc::Health::V1::Health::Stub.new(sock)
+      sock = TCPSocket.new("127.0.0.1", AnyCable.config.rpc_host.split(":").last, connect_timeout: 0.1)
+      ::Grpc::Health::V1::Health::Stub.new(sock, timeout: 1)
     else
       ::Grpc::Health::V1::Health::Stub.new(AnyCable.config.rpc_host, :this_channel_is_insecure)
     end

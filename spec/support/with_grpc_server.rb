@@ -6,19 +6,29 @@ RSpec.shared_context "anycable:grpc:server" do
 
     @server.start
 
+    sock = nil
+
     health_service = if GRPC_KIT
-      sock = TCPSocket.new(*AnyCable.config.rpc_host.split(":"))
-      ::Grpc::Health::V1::Health::Stub.new(sock)
+      sock = TCPSocket.new("127.0.0.1", AnyCable.config.rpc_host.split(":").last, connect_timeout: 0.1)
+      ::Grpc::Health::V1::Health::Stub.new(sock, timeout: 1)
     else
       ::Grpc::Health::V1::Health::Stub.new(AnyCable.config.rpc_host, :this_channel_is_insecure)
     end
 
     time = 2.0
     loop do
-      break if health_service.check(Grpc::Health::V1::HealthCheckRequest.new({service: "anycable.RPC"})).status == :SERVING
-      raise "Server is not ready" if (time -= 0.1) < 0
+      begin
+        break if health_service.check(Grpc::Health::V1::HealthCheckRequest.new({service: "anycable.RPC"})).status == :SERVING
+      rescue GrpcKit::Errors::DeadlineExceeded
+      end
+
+      time -= 0.1
+      raise "Server is not ready" if time < 0
+
       sleep 0.1
     end
+  ensure
+    sock&.close
   end
 
   after(:all) { @server.stop }
