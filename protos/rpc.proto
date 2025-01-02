@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package anycable;
 
+option ruby_package = "AnyCable";
+
 service RPC {
   rpc Connect (ConnectionRequest) returns (ConnectionResponse) {}
   rpc Command (CommandMessage) returns (CommandResponse) {}
