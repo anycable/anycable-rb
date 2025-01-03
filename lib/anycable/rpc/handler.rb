@@ -42,6 +42,19 @@ module AnyCable
         )
       end
 
+      def build_presence_response(socket)
+        return unless socket.presence
+
+        info = socket.presence[:info]
+        info = info.to_json if info && !info.is_a?(String)
+
+        AnyCable::PresenceResponse.new(
+          type: socket.presence.fetch(:type),
+          id: socket.presence.fetch(:id),
+          info: info
+        )
+      end
+
       def logger
         AnyCable.logger
       end

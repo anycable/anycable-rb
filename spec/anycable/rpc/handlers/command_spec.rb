@@ -41,6 +41,16 @@ describe AnyCable::RPC::Handlers::Command do
           transmit count: state["counter"]
         end
 
+        def join(*)
+          usr = connection.identifiers["current_user"]
+          connection.socket.presence_join("presence", "u_#{usr}", {name: usr[0].upcase + usr[1..]})
+        end
+
+        def leave(*)
+          usr = connection.identifiers["current_user"]
+          connection.socket.presence_leave("u_#{usr}")
+        end
+
         private
 
         def session
@@ -176,6 +186,34 @@ describe AnyCable::RPC::Handlers::Command do
         expect(third_call.istate.to_h).to be_empty
       end
     end
+
+    context "presence tracking" do
+      context "when joining" do
+        let(:data) { {action: "join"} }
+
+        it "responds with presence event and stream setup", :aggregate_failures do
+          expect(subject).to be_success
+          expect(subject.istate["$p"]).to eq "presence"
+          expect(subject.streams).to eq ["presence"]
+          expect(subject.presence.type).to eq "join"
+          expect(subject.presence.id).to eq "u_john"
+          expect(subject.presence.info).to eq({name: "John"}.to_json)
+        end
+      end
+
+      context "when leaving" do
+        let(:data) { {action: "leave"} }
+
+        it "responds with presence event", :aggregate_failures do
+          expect(subject).to be_success
+          expect(subject.istate.to_h).to be_empty
+          expect(subject.streams).to be_empty
+          expect(subject.presence.type).to eq "leave"
+          expect(subject.presence.id).to eq "u_john"
+          expect(subject.presence.info).to eq ""
+        end
+      end
+    end
   end
 
   describe "SUBSCRIBE" do
@@ -187,6 +225,9 @@ describe AnyCable::RPC::Handlers::Command do
             @rejected = true
           else
             stream_from "test", whisper: true
+
+            # presence
+            connection.socket.presence_join("test", "u_john", {name: "John"})
           end
         end
       end.tap { |klass| AnyCable::TestFactory.register_channel("test_subscribe", klass) }
@@ -217,6 +258,11 @@ describe AnyCable::RPC::Handlers::Command do
         expect(subject.stop_streams).to eq false
         expect(subject.transmissions.first).to include("confirm_subscription")
         expect(subject.istate["$w"]).to eq "test"
+        # presence
+        expect(subject.istate["$p"]).to eq "test"
+        expect(subject.presence.type).to eq "join"
+        expect(subject.presence.id).to eq "u_john"
+        expect(subject.presence.info).to eq({name: "John"}.to_json)
       end
     end
 

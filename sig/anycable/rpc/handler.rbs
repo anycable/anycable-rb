@@ -3,6 +3,7 @@ module AnyCable
     interface _Handler
       def build_socket: (env: Env) -> Socket
       def build_env_response: (Socket socket) -> EnvResponse
+      def build_presence_response: (Socket socket) -> PresenceResponse?
       def logger: () -> Logger
       def factory: () -> _ConnectionFactory
     end

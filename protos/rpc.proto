@@ -28,6 +28,13 @@ message EnvResponse {
   map<string,string> istate = 2;
 }
 
+message PresenceResponse {
+  string type = 1;
+  string id = 2;
+  string info = 3;
+  uint32 ttl = 4;
+}
+
 message ConnectionRequest {
   Env env = 3;
 }
@@ -57,6 +64,7 @@ message CommandResponse {
   string error_msg = 6;
   EnvResponse env = 7;
   repeated string stopped_streams = 8;
+  PresenceResponse presence = 9;
 }
 
 message DisconnectRequest {

@@ -4,6 +4,7 @@ require "stringio"
 
 module AnyCable
   WHISPER_KEY = "$w"
+  PRESENCE_KEY = "$p"
 
   # Socket mock to be used with application connection
   class Socket
@@ -46,7 +47,7 @@ module AnyCable
       end
     end
 
-    attr_reader :transmissions
+    attr_reader :transmissions, :presence
 
     def initialize(env:)
       @transmissions = []
@@ -58,11 +59,11 @@ module AnyCable
     end
 
     def subscribe(_channel, broadcasting)
-      streams[:start] << broadcasting
+      streams[:start] << broadcasting unless streams[:start].include?(broadcasting)
     end
 
     def unsubscribe(_channel, broadcasting)
-      streams[:stop] << broadcasting
+      streams[:stop] << broadcasting unless streams[:stop].include?(broadcasting)
 
       if istate.read(WHISPER_KEY) == broadcasting
         istate.write(WHISPER_KEY, "")
@@ -71,6 +72,21 @@ module AnyCable
 
     def whisper(_channel, broadcasting)
       istate.write(WHISPER_KEY, broadcasting)
+    end
+
+    def presence_join(broadcasting, id, info)
+      raise ArgumentError, "ID is required for presence tracking" unless id
+
+      subscribe("", broadcasting)
+      istate.write(PRESENCE_KEY, broadcasting)
+
+      @presence = {type: "join", id: id, info: info}.compact
+    end
+
+    def presence_leave(id)
+      raise ArgumentError, "ID is required for presence tracking" unless id
+
+      @presence = {type: "leave", id: id}
     end
 
     def unsubscribe_from_all(_channel)

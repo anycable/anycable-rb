@@ -27,7 +27,8 @@ module AnyCable
             streams: socket.streams[:start],
             stopped_streams: socket.streams[:stop],
             transmissions: socket.transmissions,
-            env: build_env_response(socket)
+            env: build_env_response(socket),
+            presence: build_presence_response(socket)
           )
         end
       end

@@ -41,6 +41,16 @@ module AnyCable
     def initialize: (?cstate: protoMap?, ?istate: protoMap?) -> void
   end
 
+  type presenceEvent = "join" | "leave" | "update"
+
+  class PresenceResponse
+    attr_accessor type: presenceEvent
+    attr_accessor id: String
+    attr_accessor info: String?
+
+    def initialize: (?type: presenceEvent, ?id: String, ?info: String) -> void
+  end
+
   interface _ProtoMessage
     def initialize: (**untyped) -> void
   end
@@ -130,6 +140,7 @@ module AnyCable
     attr_accessor error_msg: String?
     attr_accessor env: EnvResponse
     attr_accessor stopped_streams: Array[String]
+    attr_accessor presence: PresenceResponse
 
     %a{rbs:test:skip} def initialize: (
       status: rpcStatus,
@@ -139,7 +150,8 @@ module AnyCable
       ?stopped_streams: Array[String],
       ?transmissions: Array[String],
       ?error_msg: String,
-      ?env: EnvResponse
+      ?env: EnvResponse?,
+      ?presence: PresenceResponse?
     ) -> void
 
     def to_h: () -> Hash[Symbol, untyped]

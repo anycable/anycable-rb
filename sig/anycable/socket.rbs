@@ -15,6 +15,7 @@ module AnyCable
 
     attr_reader transmissions: Array[String]
     attr_reader request_env: Env
+    attr_reader presence: Hash[Symbol, untyped]?
 
     def initialize: (env: Env) -> void
     def transmit: (String) -> void
@@ -30,6 +31,9 @@ module AnyCable
     def env: () -> Hash[String, untyped]
     def cstate: () -> State
     def istate: () -> State
+    def whisper: (String, String) -> void
+    def presence_join: (String, String, String | Hash[untyped, untyped]) -> void
+    def presence_leave: (String) -> void
 
     private
 
