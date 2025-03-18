@@ -2,6 +2,10 @@
 
 ## master
 
+## 1.6.0 (2025-03-18)
+
+- Add presence support. ([@palkan][])
+
 ## 1.5.2 (2024-12-27)
 
 - Update google-protobuf to version 4 (support Ruby 3.4). ([@le0pard][])
