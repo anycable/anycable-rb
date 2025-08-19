@@ -2,6 +2,10 @@
 
 ## master
 
+- Update gRPC server keepalive configuration. ([@palkan][])
+
+  Should fix the `ENHANCE_YOUR_CALM` logs at the server side.
+
 ## 1.6.0 (2025-03-18)
 
 - Add presence support. ([@palkan][])

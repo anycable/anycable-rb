@@ -44,7 +44,8 @@ describe AnyCable::Config do
         "grpc.per_message_compression" => 1,
         "grpc.max_concurrent_streams" => 10,
         "grpc.keepalive_permit_without_calls" => 1,
-        "grpc.http2.min_recv_ping_interval_without_data_ms" => 10_000
+        "grpc.http2.min_recv_ping_interval_without_data_ms" => 10_000,
+        "grpc.http2.min_ping_interval_without_data_ms" => 10_000
       })
     end
 
@@ -53,7 +54,8 @@ describe AnyCable::Config do
         .to eq({
           "grpc.max_connection_age_ms" => 300_000,
           "grpc.keepalive_permit_without_calls" => 1,
-          "grpc.http2.min_recv_ping_interval_without_data_ms" => 10_000
+          "grpc.http2.min_recv_ping_interval_without_data_ms" => 10_000,
+          "grpc.http2.min_ping_interval_without_data_ms" => 10_000
         })
     end
 
@@ -62,7 +64,8 @@ describe AnyCable::Config do
         .to eq({
           "grpc.max_connection_age_ms" => 60_000,
           "grpc.keepalive_permit_without_calls" => 1,
-          "grpc.http2.min_recv_ping_interval_without_data_ms" => 10_000
+          "grpc.http2.min_recv_ping_interval_without_data_ms" => 10_000,
+          "grpc.http2.min_ping_interval_without_data_ms" => 10_000
         })
     end
 
@@ -71,7 +74,8 @@ describe AnyCable::Config do
         .to eq({
           "grpc.max_connection_age_ms" => 300_000,
           "grpc.keepalive_permit_without_calls" => 0,
-          "grpc.http2.min_recv_ping_interval_without_data_ms" => 10_000
+          "grpc.http2.min_recv_ping_interval_without_data_ms" => 10_000,
+          "grpc.http2.min_ping_interval_without_data_ms" => 10_000
         })
     end
   end

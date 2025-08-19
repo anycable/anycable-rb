@@ -43,6 +43,7 @@ module AnyCable
             # See also https://github.com/grpc/grpc/blob/master/doc/keepalive.md and https://grpc.github.io/grpc/core/group__grpc__arg__keys.html
             sargs["grpc.keepalive_permit_without_calls"] ||= 1
             sargs["grpc.http2.min_recv_ping_interval_without_data_ms"] ||= 10_000
+            sargs["grpc.http2.min_ping_interval_without_data_ms"] ||= 10_000
           end
         }
       end
