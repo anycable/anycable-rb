@@ -32,17 +32,32 @@ rescue LoadError
   require "unicode_plot"
 end
 
+require "pty"
+
 module DockerMonitor
   module_function
 
   def monitor_docker(id)
     report = {stopped: false, data: []}
     Thread.new do
-      IO.popen("docker stats #{id} --format='{{.MemUsage}}' 2> /dev/null") do |io|
-        while line = io.gets
-          break if report[:stopped]
-          report[:data] << line.match(/([\.\d]+)MiB/)[1].to_f
+      begin
+        PTY.spawn("docker stats #{id} --format='{{.MemUsage}}' 2> /dev/null") do |stdout, stdin, pid|
+          begin
+            stdout.each_line do |line|
+              break if report[:stopped]
+              break if line.strip.empty?
+
+              if line.match?(/([\.\d]+)MiB/)
+                value = line.match(/([\.\d]+)MiB/)[1].to_f
+                report[:data] << value
+              end
+            end
+          rescue Errno::EIO
+            # This is expected when the process ends
+          end
         end
+      rescue PTY::ChildExited
+        # Process has exited
       end
     end
     report
