@@ -2,6 +2,8 @@
 
 ## master
 
+## 1.6.1 (2025-08-19)
+
 - Update gRPC server keepalive configuration. ([@palkan][])
 
   Should fix the `ENHANCE_YOUR_CALM` logs at the server side.
