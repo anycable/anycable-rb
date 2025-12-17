@@ -55,7 +55,7 @@ module AnyCable
       nats_options: {},
 
       ### HTTP broadcasting options
-      http_broadcast_url: "http://localhost:8090/_broadcast",
+      http_broadcast_url: nil,
       # DEPRECATED: use `broadcast_key` instead
       http_broadcast_secret: nil,
 
@@ -99,6 +99,11 @@ module AnyCable
 
     def http_health_port_provided?
       !http_health_port.nil? && http_health_port != ""
+    end
+
+    def http_broadcast_url
+      # AnyCable accepts broadcast on a different port by default when no authentication configured
+      super || (broadcast_key! ? "http://localhost:8080/_broadcast" : "http://localhost:8090/_broadcast")
     end
 
     def broadcast_key!
