@@ -10,11 +10,11 @@ Learn more about different RPC modes in the [AnyCable documentation](../anycable
 
 ## Using with Rails
 
-To enable HTTP RPC in your Rails application, all you need is to configure the `http_rpc_mount_path` parameter. For example, in your `config/anycable.yml`:
+To enable HTTP RPC in your Rails application, all you need is to configure the `http_rpc` or `http_rpc_mount_path` parameter. For example, in your `config/anycable.yml`:
 
 ```yml
 development:
-  http_rpc_mount_path: "/_anycable"
+  http_rpc: true # uses default /_anycable path
 
 production:
   http_rpc_mount_path: "/__some_other_anycable_path"
