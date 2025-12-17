@@ -55,7 +55,7 @@ module AnyCable
 
       print_version!
 
-      logger.info "Serving #{defined?(::Rails) ? "Rails " : ""}application from #{boot_file}" unless embedded?
+      logger.info "Serving #{"Rails " if defined?(::Rails)}application from #{boot_file}" unless embedded?
 
       verify_connection_factory!
 
