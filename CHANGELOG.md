@@ -2,6 +2,10 @@
 
 ## master
 
+## 1.6.2 (2025-12-18)
+
+- Use the same default port for HTTP broadcasts as in AnyCable. ([@palkan][])
+
 ## 1.6.1 (2025-08-19)
 
 - Update gRPC server keepalive configuration. ([@palkan][])
