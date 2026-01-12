@@ -47,6 +47,7 @@ module AnyCable
       redis_tls_verify: false,
       redis_tls_client_cert_path: nil,
       redis_tls_client_key_path: nil,
+      redis_tls_ca_cert_path: nil,
 
       ### NATS options
       nats_servers: "nats://localhost:4222",
@@ -151,6 +152,7 @@ module AnyCable
           --redis-tls-verify=yes|no         Whether to perform server certificate check in case of rediss:// protocol. Default: yes
           --redis-tls-client_cert-path=path Default: nil
           --redis-tls-client_key-path=path  Default: nil
+          --redis-tls-ca-path=path          Default: nil
 
       NATS
           --nats-servers=<...addresses>     NATS servers for broadcasting, default: "nats://localhost:4222"
@@ -185,21 +187,21 @@ module AnyCable
       end.tap do |params|
         next unless redis_url.match?(/rediss:\/\//)
 
-        if !!redis_tls_client_cert_path ^ !!redis_tls_client_key_path
-          raise_validation_error "Both Redis TLS client certificate and private key must be specified (or none of them)"
+        cert_path, key_path, ca_path = redis_tls_client_cert_path, redis_tls_client_key_path, redis_tls_ca_cert_path
+
+        ssl_params = {}
+
+        if cert_path && key_path
+          ssl_params[:cert] = OpenSSL::X509::Certificate.new(File.read(cert_path))
+          ssl_params[:key] = OpenSSL::PKey.read(File.read(key_path))
+          ssl_params[:ca_path] if ca_path
         end
 
         if !redis_tls_verify?
-          params[:ssl_params] = {verify_mode: OpenSSL::SSL::VERIFY_NONE}
-        else
-          cert_path, key_path = redis_tls_client_cert_path, redis_tls_client_key_path
-          if cert_path && key_path
-            params[:ssl_params] = {
-              cert: OpenSSL::X509::Certificate.new(File.read(cert_path)),
-              key: OpenSSL::PKey.read(File.read(key_path))
-            }
-          end
+          ssl_params[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
         end
+
+        params[:ssl_params] = ssl_params unless ssl_params.empty?
       end
     end
 

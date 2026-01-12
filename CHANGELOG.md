@@ -2,6 +2,8 @@
 
 ## master
 
+- Add `redis_tls_ca_cert_path` configuration option. ([@palkan][])
+
 ## 1.6.2 (2025-12-18)
 
 - Use the same default port for HTTP broadcasts as in AnyCable. ([@palkan][])

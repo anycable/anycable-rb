@@ -27,6 +27,8 @@ module AnyCable
     def redis_tls_client_cert_path=: (String) -> void
     def redis_tls_client_key_path: () -> String?
     def redis_tls_client_key_path=: (String) -> void
+    def redis_tls_ca_cert_path: () -> String?
+    def redis_tls_ca_cert_path=: (String) -> void
     def nats_servers: () -> Array[String]
     def nats_servers=: (Array[String]) -> void
     def nats_channel: () -> String
