@@ -17,7 +17,7 @@ module AnyCable
       private
 
       def notify_exception(exp, method_name, request)
-        AnyCable::ExceptionsHandling.notify(exp, method_name.to_s, request.to_h)
+        AnyCable::ExceptionsHandling.notify(exp, method_name.to_s, request&.to_h)
       end
 
       def response_class(method_name)
