@@ -2,6 +2,10 @@
 
 ## master
 
+## 1.6.3 (2026-02-19)
+
+- Handle nil input from gRPC. ([@palkan][])
+
 - Add `redis_tls_ca_cert_path` configuration option. ([@palkan][])
 
 ## 1.6.2 (2025-12-18)
