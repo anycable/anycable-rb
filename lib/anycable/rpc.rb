@@ -90,7 +90,7 @@ module AnyCable
   end
 
   # TODO: Move sid to env in the future version of RPC proto
-  unless Env.instance_methods(false).include?(:sid)
+  unless Env.method_defined?(:sid, false)
     class Env
       attr_accessor :sid
     end
