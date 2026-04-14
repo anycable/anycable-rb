@@ -5,7 +5,7 @@ module AnyCable
     module Handlers
       module Connect
         def connect(request)
-          logger.debug("RPC Connect: #{request.inspect}")
+          logger.debug("RPC Connect: #{request.inspect}") if AnyCable.config.log_rpc?
 
           socket = build_socket(env: request.env)
 

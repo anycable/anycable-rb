@@ -5,7 +5,7 @@ module AnyCable
     module Handlers
       module Command
         def command(message)
-          logger.debug("RPC Command: #{message.inspect}")
+          logger.debug("RPC Command: #{message.inspect}") if AnyCable.config.log_rpc?
 
           socket = build_socket(env: message.env)
 

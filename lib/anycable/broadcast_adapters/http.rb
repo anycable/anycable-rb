@@ -63,7 +63,7 @@ module AnyCable
 
       def raw_broadcast(payload)
         ensure_thread_is_alive
-        AnyCable.logger.info "Enqueue: #{payload}"
+        AnyCable.logger.info "Enqueue: #{payload}" if AnyCable.config.log_rpc?
         queue << payload
       end
 
@@ -102,7 +102,7 @@ module AnyCable
         build_http do |http|
           req = Net::HTTP::Post.new(url, {"Content-Type" => "application/json"}.merge(headers))
           req.body = payload
-          AnyCable.logger.info "Perform: #{payload}"
+          AnyCable.logger.info "Perform: #{payload}" if AnyCable.config.log_rpc?
           http.request(req)
         end
       end

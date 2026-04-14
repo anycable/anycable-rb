@@ -2,6 +2,8 @@
 
 ## master
 
+- Add `log_rpc` config option (default: `true`) to suppress per-request RPC trace logs. ([@noah44846][])
+
 ## 1.6.4 (2026-04-02)
 
 - Require MFA to publish the gem.

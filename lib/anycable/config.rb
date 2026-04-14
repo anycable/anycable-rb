@@ -63,6 +63,7 @@ module AnyCable
       ### Logging options
       log_file: nil,
       log_level: "info",
+      log_rpc: true, # Set to false to suppress per-request RPC trace logs (connect/command/disconnect/broadcast). Errors are always logged.
       debug: false, # Shortcut to enable debug level and verbose logging
 
       ### Health check options

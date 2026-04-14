@@ -19,6 +19,16 @@ AnyCable.logger = MyLogger.new
 
 **IMPORTANT:** When using with Rails, AnyCable automatically sets its logger to `Rails.logger`, so AnyCable-specific logging options are no-op.
 
+## Suppressing RPC trace logs
+
+Per-request RPC trace logs (connect/command/disconnect and broadcast enqueue/perform) can be suppressed with `log_rpc`:
+
+```sh
+$ ANYCABLE_LOG_RPC=false bundle exec anycable
+
+This is useful when using with Rails, where AnyCable.logger is replaced by Rails.logger and log_level has no effect on AnyCable-specific logs. Errors are always logged regardless of this setting.
+```
+
 ## gRPC logging
 
 AnyCable does not log any GRPC internal events by default. You can turn GRPC logger on by setting `log_grpc` parameter to true:

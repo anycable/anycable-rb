@@ -5,7 +5,7 @@ module AnyCable
     module Handlers
       module Disconnect
         def disconnect(request)
-          logger.debug("RPC Disconnect: #{request.inspect}")
+          logger.debug("RPC Disconnect: #{request.inspect}") if AnyCable.config.log_rpc?
 
           socket = build_socket(env: request.env)
 
