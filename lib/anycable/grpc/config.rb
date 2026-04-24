@@ -37,13 +37,19 @@ module AnyCable
           tls_credentials: tls_credentials,
           server_args: enhance_grpc_server_args(normalized_grpc_server_args).tap do |sargs|
             # Provide keepalive defaults unless explicitly set.
-            # They must MATCH the corresponding Go client defaults:
-            # https://github.com/anycable/anycable-go/blob/62e77e7f759aa9253c2bd23812dd59ec8471db86/rpc/rpc.go#L512-L515
+            # They must be LESS THAN the corresponding Go client defaults of 10 seconds:
+            # https://github.com/anycable/anycable/blob/main/rpc/rpc.go#L638-L641
+            # If they are set EXACTLY, normal scheduling jitter can make a ping arrive
+            # just under the threshold and accumulate strikes until the server emits
+            # GoAway ENHANCE_YOUR_CALM "too_many_pings", tearing down active RPCs.
+            # Halving the server minimum gives 5s of jitter tolerance against the fixed
+            # 10s client interval.
             #
-            # See also https://github.com/grpc/grpc/blob/master/doc/keepalive.md and https://grpc.github.io/grpc/core/group__grpc__arg__keys.html
+            # See also https://github.com/grpc/grpc/blob/master/doc/keepalive.md 
+            #          https://grpc.github.io/grpc/core/group__grpc__arg__keys.html
+            #          https://github.com/grpc/grpc/issues/25713
             sargs["grpc.keepalive_permit_without_calls"] ||= 1
-            sargs["grpc.http2.min_recv_ping_interval_without_data_ms"] ||= 10_000
-            sargs["grpc.http2.min_ping_interval_without_data_ms"] ||= 10_000
+            sargs["grpc.http2.min_ping_interval_without_data_ms"] ||= 5_000
           end
         }
       end
