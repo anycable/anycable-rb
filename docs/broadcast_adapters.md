@@ -1,6 +1,6 @@
 # Broadcasting
 
-AnyCable supports multiple ways of publishing messages from your backend to connected clients: HTTP API, Redis and [NATS][]-backed.
+AnyCable supports multiple ways of publishing messages from your backend to connected clients: HTTP API, Redis, [NATS][], and Postgres-backed.
 
 AnyCable Ruby provides a universal API to publish broadcast messages from your Ruby/Rails applications independently of which underlying technology you would like to use. All you need is to pick and configure an adapter.
 
@@ -87,6 +87,32 @@ The following configuration options are available:
   NATS pus/sub channel for broadcasting (default: `"__anycable__"`).
 
 With [embedded NATS](../anycable-go/embedded_nats.md) feature of AnyCable, you can minimize the number of required components to deploy an AnyCable-backed application.
+
+### Postgres
+
+> Enable via `broadcast_adapter: postgres` in `anycable.yml` or `ANYCABLE_BROADCAST_ADAPTER=postgres`.
+
+**NOTE:** Make sure you added the `pg` gem to your Gemfile.
+
+The Postgres adapter inserts the full AnyCable broadcast JSON envelope into the `anycable_broadcasts` table. anycable-go reads payloads from the table; PostgreSQL `LISTEN/NOTIFY` is used only as a wake-up signal, so broadcasts are not limited by the `NOTIFY` payload size.
+
+The following configuration options are available:
+
+- **postgres_url** (`ANYCABLE_POSTGRES_URL`, or `DATABASE_URL` by default)
+
+  Postgres connection URL.
+
+- **postgres_broadcasts_table** (`ANYCABLE_POSTGRES_BROADCASTS_TABLE`)
+
+  Table used to enqueue app-to-AnyCable broadcasts (default: `"anycable_broadcasts"`).
+
+- **postgres_contract_table** (`ANYCABLE_POSTGRES_CONTRACT_TABLE`)
+
+  Table used to validate the installed signalling contract (default: `"anycable_contracts"`).
+
+- **postgres_validate_contract** (`ANYCABLE_POSTGRES_VALIDATE_CONTRACT`)
+
+  Validate the contract version, broadcast table columns, and trigger when the adapter starts (default: `true`).
 
 ## Broadcasting API
 

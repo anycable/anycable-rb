@@ -188,6 +188,24 @@ describe AnyCable::Config do
     end
   end
 
+  describe "#to_postgres_params" do
+    before do
+      config.postgres_url = "postgres://postgres-1/anycable"
+      config.postgres_broadcasts_table = "anycable_broadcasts"
+      config.postgres_contract_table = "anycable_contracts"
+      config.postgres_validate_contract = true
+    end
+
+    specify do
+      expect(subject.to_postgres_params).to eq(
+        url: "postgres://postgres-1/anycable",
+        broadcasts_table: "anycable_broadcasts",
+        contract_table: "anycable_contracts",
+        validate_contract: true
+      )
+    end
+  end
+
   describe "defaults" do
     subject(:config) { described_class.new }
 

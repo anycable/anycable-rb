@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "redis", ">= 4.0"
   spec.add_development_dependency "nats-pure", "~> 2"
+  spec.add_development_dependency "pg", ">= 1.4"
 
   spec.add_development_dependency "bundler", ">= 1"
   spec.add_development_dependency "rake", ">= 13.0"

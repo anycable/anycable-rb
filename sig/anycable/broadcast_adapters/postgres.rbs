@@ -1,0 +1,15 @@
+module AnyCable
+  module BroadcastAdapters
+    class Postgres < Base
+      CONTRACT_NAME: String
+      CONTRACT_VERSION: Integer
+      BROADCASTS_TRIGGER_NAME: String
+
+      attr_reader pg_conn: untyped
+      attr_reader table: String
+      attr_reader contract_table: String
+
+      def initialize: (**untyped options) -> void
+    end
+  end
+end
