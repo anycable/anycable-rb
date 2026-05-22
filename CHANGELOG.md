@@ -2,6 +2,8 @@
 
 ## master
 
+- Add Postgres broadcast adapter. ([@TikiTDO][])
+
 ## 1.6.4 (2026-04-02)
 
 - Require MFA to publish the gem.
@@ -245,3 +247,4 @@ See [Changelog](https://github.com/anycable/anycable-rb/blob/0-6-stable/CHANGELO
 [@cylon-v]: https://github.com/cylon-v
 [@earlopain]: https://github.com/earlopain
 [@le0pard]: https://github.com/le0pard
+[@TikiTDO]: https://github.com/TikiTDO
