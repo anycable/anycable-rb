@@ -105,6 +105,10 @@ describe AnyCable::BroadcastAdapters::Postgres do
       allow(pg_conn).to receive(:exec_params).and_return(version_result, columns_result, trigger_result)
 
       expect { described_class.new }.not_to raise_error
+      expect(pg_conn).to have_received(:exec_params).with(
+        a_string_matching(/tgenabled <> 'D'.*\(tgtype::int & 4\) = 4/m),
+        ["anycable_broadcasts", described_class::BROADCASTS_TRIGGER_NAME]
+      )
     end
 
     it "fails when the contract row is missing" do

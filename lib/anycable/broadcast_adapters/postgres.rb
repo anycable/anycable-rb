@@ -89,12 +89,14 @@ module AnyCable
             WHERE tgrelid = to_regclass($1)
               AND tgname = $2
               AND NOT tgisinternal
+              AND tgenabled <> 'D'
+              AND (tgtype::int & 4) = 4
           )
         SQL
 
         return if result.getvalue(0, 0) == "t"
 
-        raise "Postgres signalling table #{table} is missing trigger #{BROADCASTS_TRIGGER_NAME}"
+        raise "Postgres signalling table #{table} is missing enabled INSERT trigger #{BROADCASTS_TRIGGER_NAME}"
       end
 
       def expected_columns
