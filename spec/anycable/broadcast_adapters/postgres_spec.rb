@@ -9,9 +9,6 @@ describe AnyCable::BroadcastAdapters::Postgres do
 
   before do
     config.postgres_url = "postgres://postgres-1/anycable"
-    config.postgres_broadcasts_table = "anycable_broadcasts"
-    config.postgres_contract_table = "anycable_contracts"
-    config.postgres_validate_contract = false
 
     allow(::PG).to receive(:connect) { pg_conn }
   end
@@ -21,16 +18,14 @@ describe AnyCable::BroadcastAdapters::Postgres do
   let(:config) { AnyCable.config }
 
   it "uses config options by default" do
-    adapter = described_class.new
+    described_class.new
 
-    expect(adapter.table).to eq "\"anycable_broadcasts\""
     expect(PG).to have_received(:connect).with("postgres://postgres-1/anycable")
   end
 
   it "uses override config params" do
-    adapter = described_class.new(url: "postgres://local.pg/anycable", broadcasts_table: "public.anycable_broadcasts")
+    described_class.new(url: "postgres://local.pg/anycable")
 
-    expect(adapter.table).to eq "\"public\".\"anycable_broadcasts\""
     expect(PG).to have_received(:connect).with("postgres://local.pg/anycable")
   end
 
@@ -44,78 +39,78 @@ describe AnyCable::BroadcastAdapters::Postgres do
     end
 
     specify do
-      expect { described_class.new.announce! }.to output(/Broadcasting Postgres table: "anycable_broadcasts"/).to_stdout_from_any_process
+      expect { described_class.new.announce! }.to output(/Broadcasting Postgres functions: anycable_publish, anycable_remote_command/).to_stdout_from_any_process
     end
   end
 
   describe "#broadcast" do
-    it "inserts stream data into the broadcast table" do
+    it "publishes stream data through the Postgres function" do
       allow(pg_conn).to receive(:exec_params)
 
       adapter = described_class.new
       adapter.broadcast("notification", "hello!")
 
       expect(pg_conn).to have_received(:exec_params).with(
-        "INSERT INTO \"anycable_broadcasts\" (payload) VALUES ($1)",
-        [{stream: "notification", data: "hello!"}.to_json]
+        "SELECT anycable_publish($1, $2, $3)",
+        [
+          "notification",
+          {stream: "notification", data: "hello!"}.to_json,
+          "{}"
+        ]
+      )
+    end
+
+    it "publishes each batched message through the Postgres function" do
+      allow(pg_conn).to receive(:exec_params)
+
+      adapter = described_class.new
+      adapter.batching do
+        adapter.broadcast("notification", "hello!")
+        adapter.broadcast("chat", "hi!", exclude_socket: "42")
+      end
+
+      expect(pg_conn).to have_received(:exec_params).with(
+        "SELECT anycable_publish($1, $2, $3)",
+        [
+          "notification",
+          {stream: "notification", data: "hello!"}.to_json,
+          "{}"
+        ]
+      )
+
+      expect(pg_conn).to have_received(:exec_params).with(
+        "SELECT anycable_publish($1, $2, $3)",
+        [
+          "chat",
+          {stream: "chat", data: "hi!", meta: {exclude_socket: "42"}}.to_json,
+          {exclude_socket: "42"}.to_json
+        ]
       )
     end
   end
 
   describe "#broadcast_command" do
-    it "inserts command data into the broadcast table" do
+    it "publishes command data through the Postgres function" do
       allow(pg_conn).to receive(:exec_params)
 
       adapter = described_class.new
       adapter.broadcast_command("disconnect", identifier: "42")
 
       expect(pg_conn).to have_received(:exec_params).with(
-        "INSERT INTO \"anycable_broadcasts\" (payload) VALUES ($1)",
-        [{command: "disconnect", payload: {identifier: "42"}}.to_json]
+        "SELECT anycable_remote_command($1, $2)",
+        [
+          {command: "disconnect", payload: {identifier: "42"}}.to_json,
+          "{}"
+        ]
       )
     end
   end
 
-  describe "contract validation" do
-    before do
-      config.postgres_validate_contract = true
-    end
+  describe "#raw_broadcast" do
+    it "rejects payloads without stream or command" do
+      adapter = described_class.new
 
-    let(:version_result) do
-      instance_double("PG::Result", ntuples: 1, getvalue: "1")
-    end
-
-    let(:columns_result) do
-      [
-        {"attname" => "id", "format_type" => "bigint", "attnotnull" => "t"},
-        {"attname" => "payload", "format_type" => "text", "attnotnull" => "t"},
-        {"attname" => "claimed_by", "format_type" => "text", "attnotnull" => "f"},
-        {"attname" => "claimed_at", "format_type" => "timestamp with time zone", "attnotnull" => "f"},
-        {"attname" => "attempts", "format_type" => "integer", "attnotnull" => "t"},
-        {"attname" => "last_error", "format_type" => "text", "attnotnull" => "f"},
-        {"attname" => "created_at", "format_type" => "timestamp with time zone", "attnotnull" => "t"}
-      ]
-    end
-
-    let(:trigger_result) do
-      instance_double("PG::Result", getvalue: "t")
-    end
-
-    it "checks contract version, columns, and trigger" do
-      allow(pg_conn).to receive(:exec_params).and_return(version_result, columns_result, trigger_result)
-
-      expect { described_class.new }.not_to raise_error
-      expect(pg_conn).to have_received(:exec_params).with(
-        a_string_matching(/tgenabled <> 'D'.*\(tgtype::int & 4\) = 4/m),
-        ["anycable_broadcasts", described_class::BROADCASTS_TRIGGER_NAME]
-      )
-    end
-
-    it "fails when the contract row is missing" do
-      missing_version = instance_double("PG::Result", ntuples: 0)
-      allow(pg_conn).to receive(:exec_params).and_return(missing_version)
-
-      expect { described_class.new }.to raise_error(/contract version mismatch/)
+      expect { adapter.raw_broadcast({data: "hello!"}.to_json) }.to raise_error(ArgumentError, /stream or command/)
     end
   end
 end

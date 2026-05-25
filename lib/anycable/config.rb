@@ -57,9 +57,6 @@ module AnyCable
 
       ### Postgres broadcasting options
       postgres_url: ENV.fetch("DATABASE_URL", "postgres://localhost:5432/postgres?sslmode=disable"),
-      postgres_broadcasts_table: "anycable_broadcasts",
-      postgres_contract_table: "anycable_contracts",
-      postgres_validate_contract: true,
 
       ### HTTP broadcasting options
       http_broadcast_url: nil,
@@ -89,12 +86,11 @@ module AnyCable
       nats_servers: {type: nil, array: true},
       redis_tls_verify: :boolean,
       nats_dont_randomize_servers: :boolean,
-      postgres_validate_contract: :boolean,
       debug: :boolean,
       version_check_enabled: :boolean
     )
 
-    flag_options :debug, :nats_dont_randomize_servers, :postgres_validate_contract
+    flag_options :debug, :nats_dont_randomize_servers
     ignore_options :nats_options
 
     def load(*_args)
@@ -168,9 +164,6 @@ module AnyCable
 
       POSTGRES
           --postgres-url=url                 Postgres URL for broadcasting, default: DATABASE_URL or "postgres://localhost:5432/postgres?sslmode=disable"
-          --postgres-broadcasts-table=name   Postgres broadcasts table, default: "anycable_broadcasts"
-          --postgres-contract-table=name     Postgres contract table, default: "anycable_contracts"
-          --postgres-validate-contract       Validate Postgres signalling contract on adapter startup
 
       HTTP BROADCASTING
           --http-broadcast-url              HTTP broadcasting endpoint URL, default: "http://localhost:8090/_broadcast"
@@ -228,10 +221,7 @@ module AnyCable
 
     def to_postgres_params
       {
-        url: postgres_url,
-        broadcasts_table: postgres_broadcasts_table,
-        contract_table: postgres_contract_table,
-        validate_contract: postgres_validate_contract?
+        url: postgres_url
       }
     end
 

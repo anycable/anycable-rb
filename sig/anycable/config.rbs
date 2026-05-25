@@ -40,13 +40,6 @@ module AnyCable
     def nats_options=: (Hash[untyped, untyped]) -> void
     def postgres_url: () -> String
     def postgres_url=: (String) -> void
-    def postgres_broadcasts_table: () -> String
-    def postgres_broadcasts_table=: (String) -> void
-    def postgres_contract_table: () -> String
-    def postgres_contract_table=: (String) -> void
-    def postgres_validate_contract: () -> bool
-    def postgres_validate_contract=: (bool) -> void
-    def postgres_validate_contract?: () -> bool
     def http_broadcast_url: () -> String
     def http_broadcast_url=: (String) -> void
     def http_broadcast_secret: () -> String?
@@ -92,7 +85,7 @@ module AnyCable
     def to_redis_params: () -> { url: String, sentinels: Array[untyped]?, ssl_params: Hash[Symbol, untyped]? }
     def to_http_health_params: () -> { port: Integer?, path: String }
     def to_nats_params: () -> Hash[Symbol, untyped]
-    def to_postgres_params: () -> { url: String, broadcasts_table: String, contract_table: String, validate_contract: bool }
+    def to_postgres_params: () -> { url: String }
 
     private
 

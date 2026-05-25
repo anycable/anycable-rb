@@ -94,25 +94,16 @@ With [embedded NATS](../anycable-go/embedded_nats.md) feature of AnyCable, you c
 
 **NOTE:** Make sure you added the `pg` gem to your Gemfile.
 
-The Postgres adapter inserts the full AnyCable broadcast JSON envelope into the `anycable_broadcasts` table. anycable-go reads payloads from the table; PostgreSQL `LISTEN/NOTIFY` is used only as a wake-up signal, so broadcasts are not limited by the `NOTIFY` payload size.
+The Postgres adapter sends the full AnyCable broadcast JSON envelope through the
+SQL functions owned by anycable-go. anycable-go stores payloads in Postgres and
+uses PostgreSQL `LISTEN/NOTIFY` only as a wake-up signal, so broadcasts are not
+limited by the `NOTIFY` payload size.
 
 The following configuration options are available:
 
 - **postgres_url** (`ANYCABLE_POSTGRES_URL`, or `DATABASE_URL` by default)
 
   Postgres connection URL.
-
-- **postgres_broadcasts_table** (`ANYCABLE_POSTGRES_BROADCASTS_TABLE`)
-
-  Table used to enqueue app-to-AnyCable broadcasts (default: `"anycable_broadcasts"`).
-
-- **postgres_contract_table** (`ANYCABLE_POSTGRES_CONTRACT_TABLE`)
-
-  Table used to validate the installed signalling contract (default: `"anycable_contracts"`).
-
-- **postgres_validate_contract** (`ANYCABLE_POSTGRES_VALIDATE_CONTRACT`)
-
-  Validate the contract version, broadcast table columns, and trigger when the adapter starts (default: `true`).
 
 ## Broadcasting API
 
