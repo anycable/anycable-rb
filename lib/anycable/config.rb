@@ -194,7 +194,7 @@ module AnyCable
         if cert_path && key_path
           ssl_params[:cert] = OpenSSL::X509::Certificate.new(File.read(cert_path))
           ssl_params[:key] = OpenSSL::PKey.read(File.read(key_path))
-          ssl_params[:ca_path] if ca_path
+          ssl_params[:ca_file] = ca_path if ca_path
         end
 
         if !redis_tls_verify?

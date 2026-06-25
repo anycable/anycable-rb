@@ -153,6 +153,54 @@ describe AnyCable::Config do
         )
       end
     end
+
+    context "with TLS and CA certificate path" do
+      subject(:config) { described_class.new }
+
+      let(:client_cert_path) { "/__anycable_spec__/client.pem" }
+      let(:client_key_path) { "/__anycable_spec__/client.key" }
+      let(:ca_cert_path) { "/__anycable_spec__/ca.pem" }
+      let(:stub_cert_pem) { "STUB_CLIENT_CERT_PEM" }
+      let(:stub_key_pem) { "STUB_CLIENT_KEY_PEM" }
+      let(:stub_cert) { instance_double(OpenSSL::X509::Certificate) }
+      let(:stub_key) { instance_double(OpenSSL::PKey::PKey) }
+
+      around do |ex|
+        with_env(
+          "ANYCABLE_REDIS_URL" => "rediss://localhost:6379/3",
+          "ANYCABLE_REDIS_TLS_VERIFY" => "1",
+          "ANYCABLE_REDIS_TLS_CLIENT_CERT_PATH" => client_cert_path,
+          "ANYCABLE_REDIS_TLS_CLIENT_KEY_PATH" => client_key_path,
+          "ANYCABLE_REDIS_TLS_CA_CERT_PATH" => ca_cert_path,
+          "ANYCABLE_REDIS_SENTINELS" => "",
+          &ex
+        )
+      end
+
+      before do
+        allow(File).to receive(:read).and_wrap_original do |original, path|
+          case path
+          when client_cert_path then stub_cert_pem
+          when client_key_path then stub_key_pem
+          else original.call(path)
+          end
+        end
+
+        allow(OpenSSL::X509::Certificate).to receive(:new).with(stub_cert_pem).and_return(stub_cert)
+        allow(OpenSSL::PKey).to receive(:read).with(stub_key_pem).and_return(stub_key)
+      end
+
+      specify do
+        expect(subject.to_redis_params).to eq(
+          url: "rediss://localhost:6379/3",
+          ssl_params: {
+            cert: stub_cert,
+            key: stub_key,
+            ca_file: ca_cert_path
+          }
+        )
+      end
+    end
   end
 
   describe "#to_nats_params" do
