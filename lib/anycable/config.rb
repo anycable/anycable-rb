@@ -55,6 +55,9 @@ module AnyCable
       nats_dont_randomize_servers: false,
       nats_options: {},
 
+      ### Postgres broadcasting options
+      postgres_url: ENV.fetch("DATABASE_URL", "postgres://localhost:5432/postgres?sslmode=disable"),
+
       ### HTTP broadcasting options
       http_broadcast_url: nil,
       # DEPRECATED: use `broadcast_key` instead
@@ -159,6 +162,9 @@ module AnyCable
           --nats-channel=name               NATS channel for broadcasting, default: "__anycable__"
           --nats-dont-randomize-servers     Pass this option to disable NATS servers randomization during (re-)connect
 
+      POSTGRES
+          --postgres-url=url                 Postgres URL for broadcasting, default: DATABASE_URL or "postgres://localhost:5432/postgres?sslmode=disable"
+
       HTTP BROADCASTING
           --http-broadcast-url              HTTP broadcasting endpoint URL, default: "http://localhost:8090/_broadcast"
 
@@ -211,6 +217,12 @@ module AnyCable
         servers: Array(nats_servers),
         dont_randomize_servers: nats_dont_randomize_servers
       }.merge(nats_options)
+    end
+
+    def to_postgres_params
+      {
+        url: postgres_url
+      }
     end
 
     # Build HTTP health server parameters

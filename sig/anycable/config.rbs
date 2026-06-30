@@ -38,6 +38,8 @@ module AnyCable
     def nats_dont_randomize_servers?: () -> bool
     def nats_options: () -> Hash[untyped, untyped]
     def nats_options=: (Hash[untyped, untyped]) -> void
+    def postgres_url: () -> String
+    def postgres_url=: (String) -> void
     def http_broadcast_url: () -> String
     def http_broadcast_url=: (String) -> void
     def http_broadcast_secret: () -> String?
@@ -83,6 +85,7 @@ module AnyCable
     def to_redis_params: () -> { url: String, sentinels: Array[untyped]?, ssl_params: Hash[Symbol, untyped]? }
     def to_http_health_params: () -> { port: Integer?, path: String }
     def to_nats_params: () -> Hash[Symbol, untyped]
+    def to_postgres_params: () -> { url: String }
 
     private
 

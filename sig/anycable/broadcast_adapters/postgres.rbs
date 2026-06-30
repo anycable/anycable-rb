@@ -1,0 +1,12 @@
+module AnyCable
+  module BroadcastAdapters
+    class Postgres < Base
+      PUBLISH_FUNCTION: String
+      REMOTE_COMMAND_FUNCTION: String
+
+      attr_reader pg_conn: untyped
+
+      def initialize: (**untyped options) -> void
+    end
+  end
+end

@@ -188,6 +188,18 @@ describe AnyCable::Config do
     end
   end
 
+  describe "#to_postgres_params" do
+    before do
+      config.postgres_url = "postgres://postgres-1/anycable"
+    end
+
+    specify do
+      expect(subject.to_postgres_params).to eq(
+        url: "postgres://postgres-1/anycable"
+      )
+    end
+  end
+
   describe "defaults" do
     subject(:config) { described_class.new }
 
